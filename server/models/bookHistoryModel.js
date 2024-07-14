@@ -34,5 +34,5 @@ const bookHistorySchema = new mongoose.Schema({
   },
 });
 
-const BookHistory = mongoose.model('bookHistory', bookHistorySchema);
+const BookHistory = mongoose.model('BookHistory', bookHistorySchema);
 export default BookHistory;

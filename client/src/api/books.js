@@ -101,3 +101,14 @@ export const fetchHistory = async (bookId, assignedTo, fromDate, toDate) => {
         return { success: false, message: err.message };
     }
 }
+
+export const GetAllHistory = async () => {
+    try {
+        const response = await axiosInstance.get('/api/books/all-history');
+        // Check that response data is in the expected format
+        // console.log(response.data);
+        return response.data;
+    } catch (err) {
+        return { success: false, message: err.message };
+    }
+};

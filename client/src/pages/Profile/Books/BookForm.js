@@ -30,9 +30,7 @@ const BookForm = ({ showBookForm, setShowBookForm, selectedBook, getData }) => {
       if (selectedBook) {
         response = await EditBook(selectedBook._id, values);
       } else {
-        values.seller = user._id;
-        values.sellerName = user.name;
-        values.status = 'pending';
+        values.year = values.year.$y
         response = await AddBook(values);
       }
       dispatch(setLoader(false));
@@ -80,7 +78,7 @@ const BookForm = ({ showBookForm, setShowBookForm, selectedBook, getData }) => {
             ref={formRef}
             onFinish={onFinish}
           >
-            <Form.Item label='ISBN' name='isbn' rules={rules}>
+            <Form.Item label='ISBN' name='ISBN' rules={rules}>
               <Input type='text' />
             </Form.Item>
             <Form.Item label='Title' name='title' rules={rules}>

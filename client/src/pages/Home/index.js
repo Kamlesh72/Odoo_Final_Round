@@ -9,7 +9,7 @@ import Filters from './Filters';
 import './index.css';
 
 const Home = () => {
-    const [products, setProducts] = useState([]);
+    const [books, setBooks] = useState([]);
     const [showFilters, setShowFilters] = useState(window.innerWidth > 400);
     const [filters, setFilters] = useState({
         status: 'approved',
@@ -25,7 +25,7 @@ const Home = () => {
             const response = await GetAllBooks(filters);
             dispatch(setLoader(false));
             if (response.success) {
-                setProducts(response.data);
+                setBooks(response.data);
             } else {
                 message.error(response.message);
             }
@@ -50,21 +50,21 @@ const Home = () => {
                     </div>
                 )}
             </div>
-            <div id="products-container" className={`col-span-4 grid gap-5 p-5 max-h-72 ${showFilters ? 'grid-cols-4' : 'grid-cols-5'}`}>
-                {products?.map((product) => {
+            <div id="books-container" className={`col-span-4 grid gap-5 p-5 max-h-72 ${showFilters ? 'grid-cols-4' : 'grid-cols-5'}`}>
+                {books?.map((book) => {
                     return (
                         <div
                             className="border border-gray-300 rounded border-solid flex flex-col gap-5 pb-2 cursor-pointer"
-                            key={product._id}
-                            onClick={() => navigate(`/product/${product._id}`)}
+                            key={book._id}
+                            onClick={() => navigate(`/book/${book._id}`)}
                         >
-                            <img src={product?.images[0]} alt="common" className="w-auto p-2 h-60 object-contain" />
+                            <img src={book?.images[0]} alt="common" className="w-auto p-2 h-60 object-contain" />
 
                             <div className="px-2 flex flex-col gap-1">
-                                <h1 className="text-lg font-semibold h-16">{product.name}</h1>
-                                <p className="text-sm text-gray-500 line-clamp-4">{product.description}</p>
+                                <h1 className="text-lg font-semibold h-16">{book.name}</h1>
+                                <p className="text-sm text-gray-500 line-clamp-4">{book.description}</p>
                                 <Divider />
-                                <span className="text-xl font-semibold text-green-700">Rs. {product.price}</span>
+                                <span className="text-xl font-semibold text-green-700">Rs. {book.price}</span>
                             </div>
                         </div>
                     );

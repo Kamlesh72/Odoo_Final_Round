@@ -43,12 +43,12 @@ select:hover {
   color: black !important;
 }
 
-.add-product {
+.add-book {
   height: fit-content !important;
   padding: 12px 18px;
   border: 2px solid black !important;
 }
-.add-product:hover {
+.add-book:hover {
   background-color: white !important;
   color: black !important;
 }

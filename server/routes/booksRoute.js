@@ -210,4 +210,22 @@ router.put('/update-book/:bookid', async (req, res) => {
   }
 });
 
+router.patch('/assign-book/:id', authMiddleware, async (req, res) => {
+  try {
+    const { assignedTo } = await Book.findById(req.params.id);
+
+    console.log(req.body.email);
+    await Book.findByIdAndUpdate(req.params.id, { assignedTo: [...assignedTo, req.body.email] });
+    res.send({
+      success: true,
+      message: "Book Assigned Successfully",
+    });
+  } catch (err) {
+    res.send({
+      success: false,
+      message: err.message,
+    });
+  }
+})
+
 export default router;

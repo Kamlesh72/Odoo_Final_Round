@@ -22,9 +22,10 @@ const bookSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    price: {
-      type: Number,
+    isAvailable: {
+      type: Boolean,
       required: true,
+      default: false
     },
     genre: {
       type: String,
@@ -37,11 +38,6 @@ const bookSchema = new mongoose.Schema(
     assignedTo: {
       type: Array,
       default: [],
-    },
-    status: {
-      type: String,
-      default: "AVAILABLE",
-      required: true,
     },
   },
   { timestamps: true }

@@ -44,3 +44,14 @@ export const UploadBookImage = async (payload) => {
         return err.message;
     }
 };
+
+export const AssignBook = async (bookId, email) => {
+    try {
+        const response = await axiosInstance.patch(`/api/books/assign-book/${bookId}`, {
+            email
+        });
+        return response.data;
+    } catch (err) {
+        return { success: false, message: err.message };
+    }
+};

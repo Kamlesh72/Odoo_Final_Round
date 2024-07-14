@@ -1,11 +1,7 @@
 const CONSTANTS = {
-  AllDepartments: [
+  AllGenres: [
     "All",
-    "Computer/IT",
-    "Chemical Engineering",
-    "Electrical Engineering",
-    "Mechanical Engineering",
-    "Civil Engineering",
+    "Fiction"
   ],
 };
 

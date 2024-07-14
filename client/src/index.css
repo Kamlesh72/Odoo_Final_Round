@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+Button {
+  padding: 3px 6px;
+}
+
+input,
+textarea,
+select {
+  min-height: 45px !important;
+  border: 1px solid #b9b9b9 !important;
+  width: 100% !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 1px solid #6a6a6a !important;
+}
+
+select:hover {
+  cursor: pointer;
+}
+
+.button-black {
+  height: 45px !important;
+  border: 2px solid black !important;
+}
+
+.button-black:hover,
+.chat-now-btn:hover {
+  background-color: white !important;
+  color: black !important;
+}
+
+.add-product {
+  height: fit-content !important;
+  padding: 12px 18px;
+  border: 2px solid black !important;
+}
+.add-product:hover {
+  background-color: white !important;
+  color: black !important;
+}
+
+table {
+  border: 1px solid #a1a1a1 !important;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+}
+
+.chat-now-btn {
+  height: 40px !important;
+  width: 120px !important;
+  margin-top: 20px;
+  border: 2px solid black !important;
+}
+
+.width-fit {
+  width: fit-content !important;
+}
+
+.my-filters-page {
+  width: 16rem;
+}

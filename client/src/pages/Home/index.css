@@ -1,0 +1,6 @@
+@media (max-width: 600px) {
+    #products-container {
+        display: flex !important;
+        flex-direction: column;
+    }
+}

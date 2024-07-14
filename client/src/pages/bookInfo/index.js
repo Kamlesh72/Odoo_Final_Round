@@ -4,7 +4,7 @@ import { setLoader } from '../../redux/loaderSlice';
 import { useParams } from 'react-router-dom';
 import Divider from '../../components/Divider';
 import { Button, Modal, Input } from 'antd';
-import { AssignBook, fetchHistory, GetBook } from '../../api/books';
+import { AssignBook, Booked, fetchHistory, GetBook } from '../../api/books';
 import { message } from 'antd';
 
 const BookInfo = () => {
@@ -31,6 +31,13 @@ const BookInfo = () => {
       dispatch(setLoader(false));
       message.error(err.message);
     }
+  };
+
+  const handleClick = async (role) => {
+    if (role === 'USER') {
+      await Booked(id, user.email);
+      window.location.reload();
+    } else setIsModalVisible(true);
   };
 
   useEffect(() => {
@@ -144,15 +151,17 @@ const BookInfo = () => {
               <Divider />
               <div className='flex justify-end'>
                 <span className='text-gray-600 mr-3'></span>
-                {book.quantity - book.assignedTo.length > 0 && (
-                  <Button
-                    type='primary'
-                    className='issue-book-btn'
-                    onClick={() => setIsModalVisible(true)}
-                  >
-                    Issue
-                  </Button>
-                )}
+                {book.assignedTo.find((b) => b.email == user.email)
+                  ? `You have successfully Booked this Book`
+                  : book.quantity - book.assignedTo.length > 0 && (
+                      <Button
+                        type='primary'
+                        className='issue-book-btn'
+                        onClick={() => handleClick(user.role)}
+                      >
+                        {user.role === 'USER' ? 'BOOK' : 'ISSUE'}
+                      </Button>
+                    )}
               </div>
             </div>
           </div>

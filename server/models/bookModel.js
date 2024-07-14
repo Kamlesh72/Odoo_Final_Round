@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const bookSchema = new mongoose.Schema(
   {
@@ -25,7 +25,7 @@ const bookSchema = new mongoose.Schema(
     isAvailable: {
       type: Boolean,
       required: true,
-      default: false
+      default: false,
     },
     genre: {
       type: String,
@@ -43,6 +43,6 @@ const bookSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Book = mongoose.model("books", bookSchema);
+const Book = mongoose.model('books', bookSchema);
 
 export default Book;

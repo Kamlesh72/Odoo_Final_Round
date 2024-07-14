@@ -13,6 +13,6 @@ db();
 
 app.use(express.json());
 app.use('/api/users', usersRoute);
-app.use('/api/books', booksRoute.js);
+app.use('/api/books', booksRoute);
 
 app.listen(port, () => console.log(`Server running on PORT ${port}`));

@@ -1,27 +1,32 @@
-import { Router } from "express";
-import User from "../models/userModel.js";
-import Chat from "../models/chatModel.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import authMiddleware from "../middlewares/authMiddleware.js";
-import ROLES from "../constants/ROLES.js";
+import { Router } from 'express';
+import User from '../models/userModel.js';
+import Chat from '../models/chatModel.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import authMiddleware from '../middlewares/authMiddleware.js';
+import ROLES from '../constants/ROLES.js';
 
 const router = Router();
 
 // User Registration
-router.post("/register", async (req, res) => {
+router.post('/register', async (req, res) => {
   try {
     const { email, name, password } = req.body;
-    if (!email || !name || !password) throw new Error("Fill all data");
+    if (!email || !name || !password) throw new Error('Fill all data');
     const user = await User.findOne({ email });
-    if (user) throw new Error("User already exists");
+    if (user) throw new Error('User already exists');
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ email, name, password: hashedPassword, role: ROLES.USER });
+    const newUser = new User({
+      email,
+      name,
+      password: hashedPassword,
+      role: ROLES.USER,
+    });
     await newUser.save();
     res.send({
       success: true,
-      message: "User created successfully",
+      message: 'User created successfully',
     });
   } catch (err) {
     res.send({
@@ -32,23 +37,23 @@ router.post("/register", async (req, res) => {
 });
 
 // User Login
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) throw new Error("Fill all data");
+    if (!email || !password) throw new Error('Fill all data');
     const user = await User.findOne({ email });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error('User not found');
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) throw new Error("Invalid Password");
+    if (!isPasswordValid) throw new Error('Invalid Password');
     console.log(user);
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1d",
+      expiresIn: '1d',
     });
 
     res.send({
       success: true,
-      message: "User Logged in successfully",
+      message: 'User Logged in successfully',
       token,
     });
   } catch (err) {
@@ -60,12 +65,12 @@ router.post("/login", async (req, res) => {
 });
 
 // Get Current User
-router.get("/get-current-user", authMiddleware, async (req, res) => {
+router.get('/get-current-user', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.body.userId);
     res.send({
       success: true,
-      message: "User fetched Successfully",
+      message: 'User fetched Successfully',
       data: user,
     });
   } catch (err) {
@@ -76,23 +81,23 @@ router.get("/get-current-user", authMiddleware, async (req, res) => {
   }
 });
 
-router.post("/get-chats", async (req, res) => {
+router.post('/get-chats', async (req, res) => {
   try {
-    const { productId, buyer, seller } = req.body;
-    let filters = { productId };
+    const { bookId, buyer, seller } = req.body;
+    let filters = { bookId };
     if (buyer) filters.buyer = buyer;
     if (seller) filters.seller = seller;
     const chat = await Chat.find(filters);
     if (chat) {
       return res.send({
         success: true,
-        message: "Message Success",
+        message: 'Message Success',
         chat,
       });
     }
     res.send({
       success: true,
-      message: "Message Success",
+      message: 'Message Success',
       chat: [],
     });
   } catch (err) {
@@ -103,13 +108,13 @@ router.post("/get-chats", async (req, res) => {
   }
 });
 
-router.post("/chat", async (req, res) => {
+router.post('/chat', async (req, res) => {
   try {
-    const { productId, buyer, buyerName, seller, messageSenderId, message } =
+    const { bookId, buyer, buyerName, seller, messageSenderId, message } =
       req.body;
     console.log(req.body);
     const chat = await Chat.findOneAndUpdate(
-      { productId, buyer, seller },
+      { bookId, buyer, seller },
       {
         $push: {
           messages: {
@@ -121,7 +126,7 @@ router.post("/chat", async (req, res) => {
     );
     if (!chat) {
       await new Chat({
-        productId,
+        bookId,
         buyer,
         buyerName,
         seller,
@@ -135,7 +140,7 @@ router.post("/chat", async (req, res) => {
     }
     res.send({
       success: true,
-      message: "Message Success",
+      message: 'Message Success',
     });
   } catch (err) {
     res.send({

@@ -87,7 +87,7 @@ router.post(
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "odooFinal",
       }); // Sending image to cloudinary
-      const bookId = req.body.productId;
+      const bookId = req.body.bookId;
       await Book.findByIdAndUpdate(bookId, {
         $push: {
           images: result.secure_url,

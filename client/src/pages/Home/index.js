@@ -22,7 +22,7 @@ const Home = () => {
     const getData = async () => {
         try {
             dispatch(setLoader(true));
-            const response = await GetAllProducts(filters);
+            const response = await GetAllBooks(filters);
             dispatch(setLoader(false));
             if (response.success) {
                 setProducts(response.data);

@@ -3,7 +3,7 @@ import './ChatBox.css';
 import axios from 'axios';
 import { Button } from 'antd';
 
-const ChatBox = ({ buyer, buyerName, displayName, seller, productId, messageSenderId }) => {
+const ChatBox = ({ buyer, buyerName, displayName, seller, bookId, messageSenderId }) => {
     const [message, setMessage] = useState('');
     const [chats, setChats] = useState([]);
     const chatIntervalRef = useRef(null);
@@ -12,7 +12,7 @@ const ChatBox = ({ buyer, buyerName, displayName, seller, productId, messageSend
             buyer,
             seller,
             buyerName,
-            productId,
+            bookId,
             messageSenderId,
             message,
         });
@@ -21,7 +21,7 @@ const ChatBox = ({ buyer, buyerName, displayName, seller, productId, messageSend
     };
     const getChats = async () => {
         const response = await axios.post('/api/users/get-chats', {
-            productId,
+            bookId,
             buyer,
             seller,
         });

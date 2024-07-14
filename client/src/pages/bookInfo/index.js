@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoader } from '../../redux/loaderSlice';
 import { Button, message } from 'antd';
 import { GetAllBooks } from '../../api/books';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Divider from '../../components/Divider';
 import moment from 'moment';
 import ChatBox from '../../components/ChatBox';
@@ -13,7 +13,6 @@ const BookInfo = () => {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isChatting, setChatting] = useState(false);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { id } = useParams();
     const { user } = useSelector((state) => state.users);
     const getData = async () => {

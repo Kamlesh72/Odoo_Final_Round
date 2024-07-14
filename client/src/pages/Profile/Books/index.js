@@ -4,7 +4,7 @@ import BookForm from './BookForm.js';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoader } from '../../../redux/loaderSlice.js';
-import { DeleteBook, GetAllBook } from '../../../api/books.js';
+import { DeleteBook, GetAllBooks } from '../../../api/books.js';
 import moment from 'moment';
 import ChatBox from '../../../components/ChatBox.js';
 import axios from 'axios';

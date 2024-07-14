@@ -9,7 +9,7 @@ export const AddBook = async (payload) => {
     }
 };
 
-export const GetAllBookss = async (filters) => {
+export const GetAllBooks = async (filters) => {
     try {
         const response = await axiosInstance.get('/api/books/all-books');
         return response.data;

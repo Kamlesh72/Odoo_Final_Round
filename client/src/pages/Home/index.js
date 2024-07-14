@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoader } from '../../redux/loaderSlice';
 import { message } from 'antd';
-import { GetAllProducts } from '../../api/books';
+import { GetAllBooks } from '../../api/books';
 import Divider from '../../components/Divider';
 import { useNavigate } from 'react-router-dom';
 import Filters from './Filters';

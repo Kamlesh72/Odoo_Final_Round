@@ -38,7 +38,7 @@ const Images = ({ selectedBook, setShowBookForm, getData }) => {
             dispatch(setLoader(true));
             const updatedImages = images.filter((img) => img !== image);
             const updatedBook = { ...selectedBook, images: updatedImages };
-            const response = await EditBook(selectedBook._id, updateBook);
+            const response = await EditBook(selectedBook._id, updatedBook);
             dispatch(setLoader(false));
             if (response.success) {
                 message.success('Image Deleted Successfully');

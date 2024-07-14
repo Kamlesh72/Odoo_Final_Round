@@ -1,29 +1,13 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-const departments = [
+const genres = [
   {
     name: "All",
     value: "All",
   },
   {
-    name: "Computer/IT",
-    value: "Computer/IT",
-  },
-  {
-    name: "Chemical Engineering",
-    value: "Chemical Engineering",
-  },
-  {
-    name: "Electrical Engineering",
-    value: "Electrical Engineering",
-  },
-  {
-    name: "Mechanical Engineering",
-    value: "Mechanical Engineering",
-  },
-  {
-    name: "Civil Engineering",
-    value: "Civil Engineering",
+    name: "Fiction",
+    value: "Fiction",
   },
 ];
 
@@ -44,33 +28,33 @@ const Filters = ({
         ></i>
       </div>
       <div className="flex flex-col gap-1 mt-5">
-        <h1 className="text-gray-600 text-xl">Departments</h1>
+        <h1 className="text-gray-600 text-xl">Genres</h1>
         <div className="flex flex-col gap-1 justify-start">
-          {departments.map((department) => {
+          {genres.map((genre) => {
             return (
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  name="department"
+                  name="genre"
                   className="width-fit"
-                  checked={filters.department.includes(department.value)}
+                  checked={filters.genre.includes(genre.value)}
                   onChange={(e) => {
                     if (e.target.checked) {
                       setFilters({
                         ...filters,
-                        department: [...filters.department, department.value],
+                        genre: [...filters.genre, genre.value],
                       });
                     } else {
                       setFilters({
                         ...filters,
-                        department: filters.department.filter(
-                          (item) => item !== department.value
+                        genre: filters.genre.filter(
+                          (item) => item !== genre.value
                         ),
                       });
                     }
                   }}
                 />
-                <label htmlFor="department">{department.value}</label>
+                <label htmlFor="genre">{genre.value}</label>
               </div>
             );
           })}

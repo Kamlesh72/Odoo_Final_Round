@@ -108,46 +108,4 @@ router.post('/get-chats', async (req, res) => {
   }
 });
 
-router.post('/chat', async (req, res) => {
-  try {
-    const { bookId, buyer, buyerName, seller, messageSenderId, message } =
-      req.body;
-    console.log(req.body);
-    const chat = await Chat.findOneAndUpdate(
-      { bookId, buyer, seller },
-      {
-        $push: {
-          messages: {
-            messageSenderId,
-            message,
-          },
-        },
-      }
-    );
-    if (!chat) {
-      await new Chat({
-        bookId,
-        buyer,
-        buyerName,
-        seller,
-        messages: [
-          {
-            messageSenderId,
-            message,
-          },
-        ],
-      }).save();
-    }
-    res.send({
-      success: true,
-      message: 'Message Success',
-    });
-  } catch (err) {
-    res.send({
-      success: false,
-      message: err.message,
-    });
-  }
-});
-
 export default router;

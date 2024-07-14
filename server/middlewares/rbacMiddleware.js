@@ -1,17 +1,23 @@
-import jwt from "jsonwebtoken";
+const rbacMiddleware = (acceptedRoles) => {
+  return (req, res, next) => {
+    try {
+      if (!acceptedRoles.includes(req.body.role)) {
+        res.status(403).json({
+          success: false,
+          message: 'Access denied: Insufficient role',
+          data: null,
+        });
+        return;
+      }
 
-const rbacMiddleware = (req, res, next) => {
-  try {
-    const token = req.header("authorization").split(" ")[1];
-    const decryptedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.body.userId = decryptedToken.userId;
-    next();
-  } catch (err) {
-    res.send({
-      success: false,
-      message: err.message,
-    });
-  }
+      next();
+    } catch (err) {
+      res.send({
+        success: false,
+        message: err.message,
+      });
+    }
+  };
 };
 
 export default authMiddleware;

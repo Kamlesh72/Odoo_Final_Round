@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoader } from '../../redux/loaderSlice';
+<<<<<<< Updated upstream:client/src/pages/productInfo/index.js
 import { Button, message } from 'antd';
 import { GetAllProducts } from '../../api/products';
 import { useNavigate, useParams } from 'react-router-dom';
+=======
+import { Button, message, Modal, Input } from 'antd';
+import { GetAllBooks, AssignBook } from '../../api/books'; // Make sure to import the new API function
+import { useParams } from 'react-router-dom';
+>>>>>>> Stashed changes:client/src/pages/bookInfo/index.js
 import Divider from '../../components/Divider';
 import moment from 'moment';
 import ChatBox from '../../components/ChatBox';
@@ -12,10 +18,13 @@ const ProductInfo = () => {
     const [product, setProduct] = useState(null);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isChatting, setChatting] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id } = useParams();
     const { user } = useSelector((state) => state.users);
+
     const getData = async () => {
         try {
             dispatch(setLoader(true));
@@ -35,6 +44,24 @@ const ProductInfo = () => {
     useEffect(() => {
         getData();
     }, []);
+
+    const handleIssue = async () => {
+        try {
+            dispatch(setLoader(true));
+            const response = await AssignBook(id, userEmail); // book-id, assigned-user-email
+            dispatch(setLoader(false));
+            if (response.success) {
+                message.success(response.message);
+                setBook(response.data);
+                setIsModalVisible(false);
+            } else {
+                message.error(response.message);
+            }
+        } catch (err) {
+            dispatch(setLoader(false));
+            message.error(err.message);
+        }
+    };
 
     return (
         <>
@@ -78,14 +105,26 @@ const ProductInfo = () => {
                             <h1 className="text-lg sm:text-xl font-semibold text-gray-700">LISTED ON</h1>
                             <span className="text-gray-600">{moment(product.createdAt).format('DD MMM YYYY hh:mm A')}</span>
                             <div className="flex justify-end">
-                                <Button type="primary" className="chat-now-btn" onClick={() => setChatting(true)}>
-                                    CHAT NOW
+                                <Button type="primary" className="issue-book-btn" onClick={() => setIsModalVisible(true)}>
+                                    Issue
                                 </Button>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
+            <Modal
+                title="Issue Book"
+                visible={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                onOk={handleIssue}
+            >
+                <Input
+                    placeholder="Enter user email"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                />
+            </Modal>
             <div className="mt-4">
                 {isChatting && (
                     <ChatBox

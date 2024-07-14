@@ -9,6 +9,42 @@ const genres = [
     name: "Fiction",
     value: "Fiction",
   },
+  {
+    name: "Self_Help",
+    value: "Self Help",
+  },
+  {
+    name: "Mystery",
+    value: "Mystery",
+  },
+  {
+    name: "Fantasy",
+    value: "Fantasy",
+  },
+  {
+    name: "Biography",
+    value: "Biography",
+  },
+  {
+    name: "Science_Fiction",
+    value: "Science Fiction",
+  },
+  {
+    name: "Romance",
+    value: "Romance",
+  },
+  {
+    name: "Thriller",
+    value: "Thriller",
+  },
+  {
+    name: "History",
+    value: "History",
+  },
+  {
+    name: "Philosophy",
+    value: "Philosophy",
+  }
 ];
 
 const Filters = ({
@@ -21,14 +57,14 @@ const Filters = ({
   return (
     <div className="flex flex-col bg-slate-100 p-5 h-full my-filters-page">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl">Filters</h1>
+        <h1 className="text-2xl">Genres</h1>
         <i
           className="ri-close-line cursor-pointer text-2xl"
           onClick={() => setShowFilters(false)}
         ></i>
       </div>
       <div className="flex flex-col gap-1 mt-5">
-        <h1 className="text-gray-600 text-xl">Genres</h1>
+        {/* <h1 className="text-gray-600 text-xl">Genres</h1> */}
         <div className="flex flex-col gap-1 justify-start">
           {genres.map((genre) => {
             return (
@@ -54,7 +90,7 @@ const Filters = ({
                     }
                   }}
                 />
-                <label htmlFor="genre">{genre.value}</label>
+                <label className="text-xl" htmlFor="genre">{genre.value}</label>
               </div>
             );
           })}

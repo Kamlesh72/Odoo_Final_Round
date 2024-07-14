@@ -61,9 +61,8 @@ const Home = () => {
       </div>
       <div
         id='books-container'
-        className={`col-span-4 grid gap-5 p-5 max-h-72 ${
-          showFilters ? 'grid-cols-4' : 'grid-cols-5'
-        }`}
+        className={`col-span-4 grid gap-5 p-5 max-h-72 ${showFilters ? 'grid-cols-4' : 'grid-cols-5'
+          }`}
       >
         {books?.map((book) => {
           return (
@@ -85,12 +84,11 @@ const Home = () => {
                 </p>
                 <Divider />
                 <div className='flex items-center'>
-                  <span className='text-xl font-semibold'>{book.year}</span>
+                  <span className='text-xl font-semibold'> Available : {book.quantity - book.assignedTo.length}</span>
                   <span className='ml-auto flex items-center'>
                     <span
-                      className={`w-4 h-4 rounded-full ${
-                        book.isAvailable ? 'bg-green-500' : 'bg-red-500'
-                      }`}
+                      className={`w-4 h-4 rounded-full ${book.quantity - book.assignedTo.length > 0 ? 'bg-green-500' : 'bg-red-500'
+                        }`}
                     ></span>
                   </span>
                 </div>

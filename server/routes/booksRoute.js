@@ -167,7 +167,7 @@ router.post('/add-history', async (req, res) => {
 
 router.get('/all-history', async (req, res) => {
   try {
-    console.log(123);
+    // console.log(123);
     const history = await BookHistory.find();
     res.send({
       success: true,
@@ -231,22 +231,121 @@ router.put('/update-book/:bookid', async (req, res) => {
   }
 });
 
-router.patch('/assign-book/:id', authMiddleware, async (req, res) => {
-  try {
-    const { assignedTo } = await Book.findById(req.params.id);
 
-    console.log(req.body.email);
-    await Book.findByIdAndUpdate(req.params.id, {
-      assignedTo: [...assignedTo, req.body.email],
-    });
+// Assign a book to a user
+router.patch('/assign-book/:bookId', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    const book = await Book.findById(req.params.bookId);
+
+    if (!user) {
+      return res.send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (book.quantity - book.assignedTo.length <= 0) {
+      return res.send({
+        success: false,
+        message: "Book out of stock",
+      });
+    }
+
+    let assigned = book.assignedTo.find(f => f.email === user.email && f.status === 'BOOKED');
+    if (assigned) {
+      assigned.status = 'ASSIGNED';
+      assigned.when = new Date();
+    } else {
+      book.assignedTo.push({ email: user.email, status: 'ASSIGNED', when: new Date() });
+    }
+
+    await book.save();
     res.send({
       success: true,
       message: 'Book Assigned Successfully',
+      data: book // Include the updated book data in the response
     });
   } catch (err) {
     res.send({
       success: false,
       message: err.message,
+    });
+  }
+});
+
+// Receive a book from a user
+router.patch('/receive-book/:bookId', authMiddleware, async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.bookId);
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      return res.send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const assignedIndex = book.assignedTo.findIndex(f => f.email === user.email && f.status === 'ASSIGNED');
+    if (assignedIndex > -1) {
+      book.assignedTo.splice(assignedIndex, 1);
+      await book.save();
+      return res.send({
+        success: true,
+        message: "Book Received Successfully",
+      });
+    }
+
+    res.send({
+      success: false,
+      message: "Book not assigned to user",
+    });
+  } catch (err) {
+    res.send({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+// Book a book for a user
+router.post('/booked/:bookId', authMiddleware, async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.bookId);
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user || !book) {
+      return res.send({
+        success: false,
+        message: "User or book not found",
+      });
+    }
+
+    if (book.quantity - book.assignedTo.length <= 0) {
+      return res.send({
+        success: false,
+        message: "Book out of stock",
+      });
+    }
+
+    if (book.assignedTo.some(a => a.email === user.email && a.status === 'BOOKED')) {
+      return res.send({
+        success: false,
+        message: "Book Already Booked by User",
+      });
+    }
+
+    book.assignedTo.push({ email: user.email, status: "BOOKED", bookedAt: new Date(), historyId: null });
+    await book.save();
+    res.send({
+      success: true,
+      message: "Book Booked Successfully",
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
     });
   }
 });

@@ -64,3 +64,40 @@ export const AssignBook = async (bookId, email) => {
         return { success: false, message: err.message };
     }
 };
+
+export const ReceiveBook = async (bookId, email) => {
+    try {
+        const response = await axiosInstance.patch(`/api/books/receive-book/${bookId}`, {
+            email
+        });
+        return response.data;
+    } catch (err) {
+        return { success: false, message: err.message };
+    }
+}
+
+export const Booked = async (bookId, email) => {
+    try {
+        const response = await axiosInstance.post(`/api/books/booked/${bookId}`, {
+            email
+        });
+        return response.data;
+    } catch (err) {
+        return { success: false, message: err.message };
+    }
+}
+
+
+export const fetchHistory = async (bookId, assignedTo, fromDate, toDate) => {
+    try {
+        const response = await axiosInstance.post(`/api/books/add-history/`, {
+            bookId,
+            assignedTo,
+            fromDate,
+            toDate,
+        });
+        return response.data;
+    } catch (err) {
+        return { success: false, message: err.message };
+    }
+}

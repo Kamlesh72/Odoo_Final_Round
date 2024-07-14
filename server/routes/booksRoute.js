@@ -1,19 +1,22 @@
-import { Router } from "express";
-import Book from "../models/bookModel.js";
-import authMiddleware from "../middlewares/authMiddleware.js";
-import cloudinary from "../config/cloudinaryConfig.js";
-import multer from "multer";
+import { Router } from 'express';
+import Book from '../models/bookModel.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
+import cloudinary from '../config/cloudinaryConfig.js';
+import multer from 'multer';
+import BookHistory from '../models/bookHistoryModel.js';
+import User from '../models/userModel.js';
+import { ObjectId } from 'mongodb';
 
 const router = Router();
 
 // Add Book
-router.post("/book", authMiddleware, async (req, res) => {
+router.post('/book', authMiddleware, async (req, res) => {
   try {
     const newBook = new Book(req.body);
     await newBook.save();
     res.send({
       success: true,
-      message: "Book Added Successfully",
+      message: 'Book Added Successfully',
     });
   } catch (err) {
     res.send({
@@ -24,7 +27,7 @@ router.post("/book", authMiddleware, async (req, res) => {
 });
 
 // Get all books
-router.get("/all-books", async (req, res) => {
+router.get('/all-books', async (req, res) => {
   try {
     const books = await Book.find();
     res.send({
@@ -40,12 +43,12 @@ router.get("/all-books", async (req, res) => {
 });
 
 // Edit a book
-router.put("/book/:id", authMiddleware, async (req, res) => {
+router.put('/book/:id', authMiddleware, async (req, res) => {
   try {
     await Book.findByIdAndUpdate(req.params.id, req.body);
     res.send({
       success: true,
-      message: "Book Updated Successfully",
+      message: 'Book Updated Successfully',
     });
   } catch (err) {
     res.send({
@@ -56,12 +59,12 @@ router.put("/book/:id", authMiddleware, async (req, res) => {
 });
 
 // Delete a book
-router.delete("/book/:id", authMiddleware, async (req, res) => {
+router.delete('/book/:id', authMiddleware, async (req, res) => {
   try {
     await Book.findByIdAndDelete(req.params.id);
     res.send({
       success: true,
-      message: "Book Deleted Successfully",
+      message: 'Book Deleted Successfully',
     });
   } catch (err) {
     res.send({
@@ -79,13 +82,13 @@ const storage = multer.diskStorage({
   },
 });
 router.post(
-  "/upload-image",
+  '/upload-image',
   authMiddleware,
-  multer({ storage: storage }).single("file"),
+  multer({ storage: storage }).single('file'),
   async (req, res) => {
     try {
       const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: "odooFinal",
+        folder: 'odooFinal',
       }); // Sending image to cloudinary
       const bookId = req.body.bookId;
       await Book.findByIdAndUpdate(bookId, {
@@ -95,7 +98,7 @@ router.post(
       });
       res.send({
         success: true,
-        message: "Image Uploaded Successfully",
+        message: 'Image Uploaded Successfully',
         data: result.secure_url,
       });
     } catch (err) {
@@ -107,5 +110,104 @@ router.post(
     }
   }
 );
+
+router.post('/add-history', async (req, res) => {
+  try {
+    const { bookId, assignedTo, fromDate, toDate } = req.body;
+    const user = await User.findById(new ObjectId(assignedTo));
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const userName = user.name;
+    const userEmail = user.email;
+
+    const bookHistory = new BookHistory({
+      bookId,
+      assignedTo: user._id,
+      userName,
+      userEmail,
+      fromDate,
+      toDate,
+    });
+
+    bookHistory.save();
+    res.send({
+      success: true,
+      message: 'Book Assigned Successfully',
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+router.get('/all-history', async (req, res) => {
+  try {
+    console.log(123);
+    const history = await BookHistory.find();
+    res.send({
+      success: true,
+      data: history,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+router.put('/update-book/:bookid', async (req, res) => {
+  try {
+    const assignedTo = req.body.assignedTo;
+    const bookId = req.params.bookid;
+
+    const bookHistory = await BookHistory.findOne({
+      bookId,
+      assignedTo: assignedTo,
+    });
+
+    if (!bookHistory) {
+      return res.status(404).send({
+        success: false,
+        message: 'Book history not found',
+      });
+    }
+
+    const now = new Date();
+    const returnDate = new Date(bookHistory.toDate);
+    const daysOverdue = Math.max((now - returnDate) / (1000 * 60 * 60 * 24), 0);
+
+    const gracePeriod = 15; // days
+    const dailyPenaltyRate = 5; // Rs per day
+
+    let totalPenalty = 0;
+
+    if (daysOverdue > gracePeriod) {
+      const overdueDays = daysOverdue - gracePeriod;
+      totalPenalty = overdueDays * dailyPenaltyRate;
+    }
+
+    await BookHistory.updateOne(
+      { bookId, assignedTo: assignedTo },
+      { $set: { penalty: totalPenalty } }
+    );
+
+    res.send({
+      success: true,
+      message: 'Penalty calculated and updated successfully',
+      penalty: totalPenalty,
+    });
+  } catch (error) {
+    console.error('Error calculating penalty:', error.message);
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 
 export default router;

@@ -4,6 +4,7 @@ import Chat from "../models/chatModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middlewares/authMiddleware.js";
+import ROLES from "../constants/ROLES.js";
 
 const router = Router();
 
@@ -16,7 +17,7 @@ router.post("/register", async (req, res) => {
     if (user) throw new Error("User already exists");
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ email, name, password: hashedPassword });
+    const newUser = new User({ email, name, password: hashedPassword, role: ROLES.USER });
     await newUser.save();
     res.send({
       success: true,

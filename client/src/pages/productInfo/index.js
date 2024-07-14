@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoader } from '../../redux/loaderSlice';
 import { Button, message } from 'antd';
-import { GetAllProducts } from '../../api/products';
+import { GetAllBooks } from '../../api/books';
 import { useNavigate, useParams } from 'react-router-dom';
 import Divider from '../../components/Divider';
 import moment from 'moment';
 import ChatBox from '../../components/ChatBox';
 
-const ProductInfo = () => {
-    const [product, setProduct] = useState(null);
+const BookInfo = () => {
+    const [book, setBook] = useState(null);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [isChatting, setChatting] = useState(false);
     const dispatch = useDispatch();
@@ -19,10 +19,10 @@ const ProductInfo = () => {
     const getData = async () => {
         try {
             dispatch(setLoader(true));
-            const response = await GetAllProducts({ _id: id });
+            const response = await GetAllBooks({ _id: id });
             dispatch(setLoader(false));
             if (response.success) {
-                setProduct(response.data[0]);
+                setBook(response.data[0]);
             } else {
                 message.error(response.message);
             }
@@ -38,14 +38,14 @@ const ProductInfo = () => {
 
     return (
         <>
-            {product && !isChatting && (
+            {book && !isChatting && (
                 <div className="p-5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         {/* images */}
                         <div className="flex flex-col gap-5">
-                            <img src={product.images[selectedImageIndex]} className="w-full sm:h-96 h-72 object-contain rounded-md" alt="common" />
+                            <img src={book.images[selectedImageIndex]} className="w-full sm:h-96 h-72 object-contain rounded-md" alt="common" />
                             <div className="flex gap-5">
-                                {product.images.map((image, index) => {
+                                {book.images.map((image, index) => {
                                     return (
                                         <img
                                             key={index}
@@ -62,21 +62,21 @@ const ProductInfo = () => {
                             </div>
                         </div>
 
-                        {/* product detail */}
+                        {/* book detail */}
                         <div className=" flex flex-col gap-2 text-lg">
-                            <h1 className="text-xl sm:text-3xl font-semibold">{product.name}</h1>
+                            <h1 className="text-xl sm:text-3xl font-semibold">{book.name}</h1>
                             <Divider />
-                            <h1 className="text-lg sm:text-xl font-semibold text-gray-700">PRODUCT DETAILS</h1>
-                            <span className="text-gray-600">{product.description}</span>
+                            <h1 className="text-lg sm:text-xl font-semibold text-gray-700">BOOk DETAILS</h1>
+                            <span className="text-gray-600">{book.description}</span>
                             <Divider />
                             <h1 className="text-lg sm:text-xl font-semibold text-gray-700">SELLER DETAILS</h1>
-                            <span className="text-gray-600">{product.sellerName}</span>
+                            <span className="text-gray-600">{book.sellerName}</span>
                             <Divider />
                             <h1 className="text-lg sm:text-xl font-semibold text-gray-700">PRICE</h1>
-                            <span className="text-gray-600">Rs. {product.price}</span>
+                            <span className="text-gray-600">Rs. {book.price}</span>
                             <Divider />
                             <h1 className="text-lg sm:text-xl font-semibold text-gray-700">LISTED ON</h1>
-                            <span className="text-gray-600">{moment(product.createdAt).format('DD MMM YYYY hh:mm A')}</span>
+                            <span className="text-gray-600">{moment(book.createdAt).format('DD MMM YYYY hh:mm A')}</span>
                             <div className="flex justify-end">
                                 <Button type="primary" className="chat-now-btn" onClick={() => setChatting(true)}>
                                     CHAT NOW
@@ -91,9 +91,9 @@ const ProductInfo = () => {
                     <ChatBox
                         buyer={user._id}
                         buyerName={user.name}
-                        displayName={product.sellerName}
-                        seller={product.seller}
-                        productId={product._id}
+                        displayName={book.sellerName}
+                        seller={book.seller}
+                        bookId={book._id}
                         messageSenderId={user._id}
                     />
                 )}
@@ -102,4 +102,4 @@ const ProductInfo = () => {
     );
 };
 
-export default ProductInfo;
+export default BookInfo;

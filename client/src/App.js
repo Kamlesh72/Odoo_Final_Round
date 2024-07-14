@@ -6,7 +6,7 @@ import Register from "./pages/Register";
 import ProtectedPage from "./components/ProtectedPage";
 import Spinner from "./components/Spinner";
 import { useSelector } from "react-redux";
-import ProductInfo from "./pages/productInfo";
+import BookInfo from "./pages/bookInfo";
 import LandingPage from "./pages/LandingPage";
 import Chats from "./pages/Chats";
 
@@ -26,10 +26,10 @@ function App() {
             }
           />
           <Route
-            path="/product/:id"
+            path="/book/:id"
             element={
               <ProtectedPage>
-                <ProductInfo />
+                <BookInfo />
               </ProtectedPage>
             }
           />

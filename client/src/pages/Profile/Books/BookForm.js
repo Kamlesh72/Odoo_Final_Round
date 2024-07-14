@@ -52,6 +52,40 @@ const BookForm = ({ showBookForm, setShowBookForm, selectedBook, getData }) => {
     }
   };
 
+  const getBookByGoogleApi = async (e) => {
+    const ISBN = e.target.value;
+    try {
+      dispatch(setLoader(true));
+      const response = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=isbn:${ISBN}`
+      );
+      const data = await response.json();
+      if (data.totalItems > 0) {
+        const book = data.items[0].volumeInfo;
+        formRef.current.setFieldsValue({
+          title: book.title,
+          author: book.authors ? book.authors[0] : undefined,
+          publisher: book.publisher,
+          year: book.publishedDate
+            ? book.publishedDate.split('-')[0]
+            : undefined,
+          genre: book.categories ? book.categories[0] : undefined,
+        });
+      } else {
+        formRef.current.setFieldsValue({
+          title: '',
+          author: '',
+          publisher: '',
+          year: '',
+          genre: '',
+        });
+      }
+    } catch (err) {
+      message.error(err.message);
+    }
+    dispatch(setLoader(false));
+  };
+
   useEffect(() => {
     if (selectedBook && formRef.current) {
       formRef.current.setFieldsValue({
@@ -96,7 +130,7 @@ const BookForm = ({ showBookForm, setShowBookForm, selectedBook, getData }) => {
             onFinish={onFinish}
           >
             <Form.Item label='ISBN' name='ISBN' rules={rules}>
-              <Input />
+              <Input onChange={getBookByGoogleApi} />
             </Form.Item>
             <Form.Item label='Title' name='title' rules={rules}>
               <Input />

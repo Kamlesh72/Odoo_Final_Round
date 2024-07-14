@@ -39,6 +39,10 @@ const bookSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    images: {
+      type: Array,
+      default: ['https://birkhauser.com/product-not-found.png'],
+    },
   },
   { timestamps: true }
 );

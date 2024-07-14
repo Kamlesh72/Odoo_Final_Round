@@ -6,8 +6,24 @@ import multer from 'multer';
 import BookHistory from '../models/bookHistoryModel.js';
 import User from '../models/userModel.js';
 import { ObjectId } from 'mongodb';
+import transporter from '../config/mailConfig.js';
 
 const router = Router();
+
+router.get('/all-history', async (req, res) => {
+  try {
+    const history = await BookHistory.find(); // Populate references if needed
+    res.send({
+      success: true,
+      data: history,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 
 // Add Book
 router.post('/book', authMiddleware, async (req, res) => {
@@ -136,6 +152,7 @@ router.post('/add-history', async (req, res) => {
   try {
     const { bookId, assignedTo, fromDate, toDate } = req.body;
     const user = await User.findById(new ObjectId(assignedTo));
+    transporter.sendMail()
     if (!user) {
       throw new Error('User not found');
     }

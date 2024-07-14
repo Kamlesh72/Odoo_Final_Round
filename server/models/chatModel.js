@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const chatSchema = new mongoose.Schema({
-  productId: {
+  bookId: {
     type: String,
     required: true,
   },

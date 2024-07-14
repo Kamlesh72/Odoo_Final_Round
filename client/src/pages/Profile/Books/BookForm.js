@@ -2,7 +2,7 @@ import { DatePicker, Form, Input, Modal, Tabs, message } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Divider from '../../../components/Divider';
-import { AddProduct, EditProduct } from '../../../api/products';
+import { AddBook, EditBook } from '../../../api/books';
 import { setLoader } from '../../../redux/loaderSlice';
 import Images from './Images';
 
@@ -13,12 +13,7 @@ const rules = [
   },
 ];
 
-const ProductForm = ({
-  showProductForm,
-  setShowProductForm,
-  selectedProduct,
-  getData,
-}) => {
+const BookForm = ({ showBookForm, setShowBookForm, selectedBook, getData }) => {
   const formRef = useRef(null);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.users);
@@ -32,20 +27,19 @@ const ProductForm = ({
     try {
       dispatch(setLoader(true));
       let response = null;
-      if (selectedProduct) {
-        response = await EditProduct(selectedProduct._id, values);
+      if (selectedBook) {
+        response = await EditBook(selectedBook._id, values);
       } else {
-        // values.seller = user._id;
-        // values.sellerName = user.name;
-        // values.status = 'pending';
-        
-        response = await AddProduct(values);
+        values.seller = user._id;
+        values.sellerName = user.name;
+        values.status = 'pending';
+        response = await AddBook(values);
       }
       dispatch(setLoader(false));
       if (response.success) {
         message.success(response.message);
         getData();
-        setShowProductForm(false);
+        setShowBookForm(false);
       }
     } catch (err) {
       message.error(err.message);
@@ -54,14 +48,14 @@ const ProductForm = ({
   };
 
   useEffect(() => {
-    if (selectedProduct) formRef.current.setFieldsValue(selectedProduct);
-  }, [selectedProduct]);
+    if (selectedBook) formRef.current.setFieldsValue(selectedBook);
+  }, [selectedBook]);
 
   return (
     <Modal
       title=''
-      open={showProductForm}
-      onCancel={() => setShowProductForm(false)}
+      open={showBookForm}
+      onCancel={() => setShowBookForm(false)}
       centered
       width={1000}
       okText='SAVE'
@@ -71,7 +65,7 @@ const ProductForm = ({
       {...(selectedTab === '2' && { footer: false })}
     >
       <h2 className='text-center uppercase'>
-        {selectedProduct ? 'EDIT PRODUCT' : 'ADD PRODUCT'}
+        {selectedBook ? 'EDIT BOOK' : 'ADD BOOK'}
       </h2>
       <Divider style={{ margin: '5px 0px' }} />
       <Tabs
@@ -116,10 +110,10 @@ const ProductForm = ({
             </Form.Item>
           </Form>
         </Tabs.TabPane>
-        <Tabs.TabPane tab='Images' key='2' disabled={!selectedProduct}>
+        <Tabs.TabPane tab='Images' key='2' disabled={!selectedBook}>
           <Images
-            selectedProduct={selectedProduct}
-            setShowProductForm={setShowProductForm}
+            selectedBook={selectedBook}
+            setShowBookForm={setShowBookForm}
             getData={getData}
           ></Images>
         </Tabs.TabPane>
@@ -128,4 +122,4 @@ const ProductForm = ({
   );
 };
 
-export default ProductForm;
+export default BookForm;

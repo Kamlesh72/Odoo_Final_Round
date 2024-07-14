@@ -1,21 +1,19 @@
 import { Router } from "express";
-import Product from "../models/projectModel.js";
+import Book from "../models/bookModel.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import cloudinary from "../config/cloudinaryConfig.js";
 import multer from "multer";
-import CONSTANTS from "../constants/Constants.js";
 
 const router = Router();
 
-// Add Product
-router.post("/product", authMiddleware, async (req, res) => {
+// Add Book
+router.post("/book", authMiddleware, async (req, res) => {
   try {
-    req.body.status = "approved";
-    const newProduct = new Product(req.body);
-    await newProduct.save();
+    const newBook = new Book(req.body);
+    await newBook.save();
     res.send({
       success: true,
-      message: "Product Added Successfully",
+      message: "Book Added Successfully",
     });
   } catch (err) {
     res.send({
@@ -25,29 +23,13 @@ router.post("/product", authMiddleware, async (req, res) => {
   }
 });
 
-// Get all products
-router.post("/all-products", async (req, res) => {
+// Get all books
+router.get("/all-books", async (req, res) => {
   try {
-    const { seller, _id, department } = req.body;
-    let filters = {};
-    if (seller) {
-      filters.seller = seller;
-    }
-    if (department) {
-      filters.department = department;
-      if (req.body.department?.length === 0)
-        filters.department = CONSTANTS.AllDepartments;
-    } else {
-      filters.department = CONSTANTS.AllDepartments;
-    }
-    if (_id) {
-      filters._id = _id;
-    }
-
-    const products = await Product.find(filters).sort({ createdAt: -1 });
+    const books = await Book.find();
     res.send({
       success: true,
-      data: products,
+      data: books,
     });
   } catch (err) {
     res.send({
@@ -57,14 +39,13 @@ router.post("/all-products", async (req, res) => {
   }
 });
 
-// Edit a product
-router.put("/product/:id", authMiddleware, async (req, res) => {
+// Edit a book
+router.put("/book/:id", authMiddleware, async (req, res) => {
   try {
-    req.body.status = "approved";
-    await Product.findByIdAndUpdate(req.params.id, req.body);
+    await Book.findByIdAndUpdate(req.params.id, req.body);
     res.send({
       success: true,
-      message: "Product Updated Successfully",
+      message: "Book Updated Successfully",
     });
   } catch (err) {
     res.send({
@@ -74,13 +55,13 @@ router.put("/product/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// Delete a product
-router.delete("/product/:id", authMiddleware, async (req, res) => {
+// Delete a book
+router.delete("/book/:id", authMiddleware, async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
+    await Book.findByIdAndDelete(req.params.id);
     res.send({
       success: true,
-      message: "Product Deleted Successfully",
+      message: "Book Deleted Successfully",
     });
   } catch (err) {
     res.send({
@@ -106,8 +87,8 @@ router.post(
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "odooFinal",
       }); // Sending image to cloudinary
-      const productId = req.body.productId;
-      await Product.findByIdAndUpdate(productId, {
+      const bookId = req.body.bookId;
+      await Book.findByIdAndUpdate(bookId, {
         $push: {
           images: result.secure_url,
         },

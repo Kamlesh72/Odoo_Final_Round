@@ -1,20 +1,19 @@
 import { Button, Table, message } from 'antd';
 import Divider from '../../../components/Divider.js';
-import ProductForm from './ProductForm.js';
+import BookForm from './BookForm.js';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoader } from '../../../redux/loaderSlice.js';
-// import { setProducts } from "../../../redux/";
-import { DeleteProduct, GetAllProducts } from '../../../api/products.js';
+import { DeleteBook, GetAllBooks } from '../../../api/books.js';
 import moment from 'moment';
 import ChatBox from '../../../components/ChatBox.js';
 import axios from 'axios';
 
-const Products = () => {
-    const [showProductForm, setShowProductForm] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
+const Books = () => {
+    const [showBookForm, setShowBookForm] = useState(false);
+    const [selectedBook, setSelectedBook] = useState(null);
     const [isChatting, setChatting] = useState(false);
-    const [products, setProducts] = useState([]);
+    const [books, setBooks] = useState([]);
     const [chats, setChats] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const { user } = useSelector((state) => state.users);
@@ -22,7 +21,7 @@ const Products = () => {
 
     const getChats = async (record) => {
         const response = await axios.post('/api/users/get-chats', {
-            productId: record._id,
+            bookId: record._id,
             seller: user._id,
         });
         setChats(response.data.chat);
@@ -49,16 +48,16 @@ const Products = () => {
                             className="ri-chat-4-fill cursor-pointer text-lg"
                             onClick={() => {
                                 setChatting(true);
-                                setSelectedProduct(record);
+                                setSelectedBook(record);
                                 getChats(record);
                             }}
                         ></i>
-                        <i className="ri-delete-bin-line cursor-pointer text-lg" onClick={() => deleteProduct(record._id)}></i>
+                        <i className="ri-delete-bin-line cursor-pointer text-lg" onClick={() => deleteBook(record._id)}></i>
                         <i
                             className="ri-pencil-line cursor-pointer text-lg"
                             onClick={() => {
-                                setSelectedProduct(record);
-                                setShowProductForm(true);
+                                setSelectedBook(record);
+                                setShowBookForm(true);
                             }}
                         ></i>
                     </div>
@@ -70,10 +69,10 @@ const Products = () => {
     const getData = async () => {
         try {
             dispatch(setLoader(true));
-            const response = await GetAllProducts({ seller: user._id });
+            const response = await GetAllBooks({ seller: user._id });
             dispatch(setLoader(false));
             if (response.success) {
-                setProducts(response.data);
+                setBooks(response.data);
             }
         } catch (err) {
             dispatch(setLoader(false));
@@ -81,10 +80,10 @@ const Products = () => {
         }
     };
 
-    const deleteProduct = async (id) => {
+    const deleteBook = async (id) => {
         try {
             dispatch(setLoader(true));
-            const response = await DeleteProduct(id);
+            const response = await DeleteBook(id);
             dispatch(setLoader(false));
             if (response.success) {
                 message.success(response.message);
@@ -105,45 +104,45 @@ const Products = () => {
             {!isChatting && (
                 <div>
                     <div className="flex justify-between items-end">
-                        <h1>Your Products</h1>
+                        <h1>Your Books</h1>
                         <div>
                             <Button
                                 type="primary"
                                 className="add-product"
                                 onClick={() => {
-                                    setShowProductForm(true);
-                                    setSelectedProduct(null);
+                                    setShowBookForm(true);
+                                    setSelectedBook(null);
                                 }}
                             >
-                                Add Product
+                                Add Book
                             </Button>
                         </div>
                     </div>
                     <Divider style={{ margin: '15px 0px' }} />
-                    
+
                     <div className="overflow-auto max-h-[400px]">
-                        <Table columns={columns} dataSource={products} />
+                        <Table columns={columns} dataSource={books} />
                     </div>
 
-                    {showProductForm && (
-                        <ProductForm
-                            showProductForm={showProductForm}
-                            setShowProductForm={setShowProductForm}
-                            selectedProduct={selectedProduct}
+                    {showBookForm && (
+                        <BookForm
+                            showBookForm={showBookForm}
+                            setShowBookForm={setShowBookForm}
+                            selectedBook={selectedBook}
                             getData={getData}
                         />
                     )}
                 </div>
             )}
             {isChatting &&
-                selectedProduct &&
+                selectedBook &&
                 (selectedUser ? (
                     <ChatBox
                         buyer={selectedUser.id}
                         buyerName={selectedUser.name}
                         displayName={selectedUser.name}
-                        seller={selectedProduct.seller}
-                        productId={selectedProduct._id}
+                        seller={selectedBook.seller}
+                        bookId={selectedBook._id}
                         messageSenderId={user._id}
                     />
                 ) : (
@@ -168,4 +167,4 @@ const Products = () => {
     );
 };
 
-export default Products;
+export default Books;

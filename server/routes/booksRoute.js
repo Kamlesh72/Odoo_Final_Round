@@ -29,7 +29,12 @@ router.post('/book', authMiddleware, async (req, res) => {
 // Get all books
 router.get('/all-books', async (req, res) => {
   try {
-    const books = await Book.find();
+    const { page = 1, limit = 10, sortBy = 'name', order = 'asc' } = req.query;
+    const sortOrder = order === 'asc' ? 1 : -1;
+    const books = await Book.find()
+      .sort({ [sortBy]: sortOrder })
+      .skip((Number(page) - 1) * Number(limit))
+      .limit(Number(limit));
     res.send({
       success: true,
       data: books,
@@ -215,10 +220,12 @@ router.patch('/assign-book/:id', authMiddleware, async (req, res) => {
     const { assignedTo } = await Book.findById(req.params.id);
 
     console.log(req.body.email);
-    await Book.findByIdAndUpdate(req.params.id, { assignedTo: [...assignedTo, req.body.email] });
+    await Book.findByIdAndUpdate(req.params.id, {
+      assignedTo: [...assignedTo, req.body.email],
+    });
     res.send({
       success: true,
-      message: "Book Assigned Successfully",
+      message: 'Book Assigned Successfully',
     });
   } catch (err) {
     res.send({
@@ -226,6 +233,6 @@ router.patch('/assign-book/:id', authMiddleware, async (req, res) => {
       message: err.message,
     });
   }
-})
+});
 
 export default router;

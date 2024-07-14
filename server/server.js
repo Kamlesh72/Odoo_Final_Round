@@ -5,6 +5,7 @@ dotenv.config();
 import db from './config/dbConfig.js';
 import usersRoute from './routes/usersRoute.js';
 import booksRoute from './routes/booksRoute.js';
+import mailRoute from './routes/mailRoute.js';
 
 const app = express();
 app.use(cors());
@@ -14,5 +15,6 @@ db();
 app.use(express.json());
 app.use('/api/users', usersRoute);
 app.use('/api/books', booksRoute);
+app.use('/api/mail', mailRoute);
 
 app.listen(port, () => console.log(`Server running on PORT ${port}`));

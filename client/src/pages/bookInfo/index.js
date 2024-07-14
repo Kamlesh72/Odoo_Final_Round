@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoader } from '../../redux/loaderSlice';
-import { Button, message } from 'antd';
-import { GetAllBooks } from '../../api/books';
 import { useParams } from 'react-router-dom';
 import Divider from '../../components/Divider';
 import moment from 'moment';
 import ChatBox from '../../components/ChatBox';
+import { Button, message, Modal, Input } from 'antd';
+import { GetAllBooks, AssignBook } from '../../api/books';
 
 const BookInfo = () => {
     const [book, setBook] = useState(null);
@@ -14,6 +14,8 @@ const BookInfo = () => {
     const [isChatting, setChatting] = useState(false);
     const dispatch = useDispatch();
     const { id } = useParams();
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
     const { user } = useSelector((state) => state.users);
     const getData = async () => {
         try {
@@ -34,6 +36,24 @@ const BookInfo = () => {
     useEffect(() => {
         getData();
     }, []);
+
+    const handleIssue = async () => {
+        try {
+            dispatch(setLoader(true));
+            const response = await AssignBook(id, userEmail); // book-id, assigned-user-email
+            dispatch(setLoader(false));
+            if (response.success) {
+                message.success(response.message);
+                setBook(response.data);
+                setIsModalVisible(false);
+            } else {
+                message.error(response.message);
+            }
+        } catch (err) {
+            dispatch(setLoader(false));
+            message.error(err.message);
+        }
+    };
 
     return (
         <>
@@ -77,8 +97,8 @@ const BookInfo = () => {
                             <h1 className="text-lg sm:text-xl font-semibold text-gray-700">LISTED ON</h1>
                             <span className="text-gray-600">{moment(book.createdAt).format('DD MMM YYYY hh:mm A')}</span>
                             <div className="flex justify-end">
-                                <Button type="primary" className="chat-now-btn" onClick={() => setChatting(true)}>
-                                    CHAT NOW
+                                <Button type="primary" className="issue-book-btn" onClick={() => setIsModalVisible(true)}>
+                                    Issue
                                 </Button>
                             </div>
                         </div>
@@ -97,6 +117,18 @@ const BookInfo = () => {
                     />
                 )}
             </div>
+            <Modal
+                title="Issue Book"
+                visible={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                onOk={handleIssue}
+            >
+                <Input
+                    placeholder="Enter user email"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                />
+            </Modal>
         </>
     );
 };

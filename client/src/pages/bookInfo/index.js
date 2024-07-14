@@ -6,7 +6,7 @@ import Divider from '../../components/Divider';
 // import moment from 'moment';
 import ChatBox from '../../components/ChatBox';
 import { Button, message, Modal, Input } from 'antd';
-import { GetAllBooks, AssignBook } from '../../api/books';
+import { AssignBook, GetBook } from '../../api/books';
 
 const BookInfo = () => {
   const [book, setBook] = useState(null);
@@ -20,11 +20,10 @@ const BookInfo = () => {
   const getData = async () => {
     try {
       dispatch(setLoader(true));
-      const response = await GetAllBooks({ _id: id });
+      const response = await GetBook(id);
       dispatch(setLoader(false));
       if (response.success) {
-        setBook(response.data[0]);
-        console.log(response.data[0]);
+        setBook(response.data);
       } else {
         message.error(response.message);
       }

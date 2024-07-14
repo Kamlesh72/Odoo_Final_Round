@@ -9,6 +9,15 @@ export const AddBook = async (payload) => {
     }
 };
 
+export const GetBook = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/api/books/book/${id}`);
+        return response.data;
+    } catch (err) {
+        return err.message;
+    }
+};
+
 export const GetAllBooks = async (filters) => {
     try {
         const response = await axiosInstance.get('/api/books/all-books');

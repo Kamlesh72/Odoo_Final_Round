@@ -26,6 +26,22 @@ router.post('/book', authMiddleware, async (req, res) => {
   }
 });
 
+// get single book by id
+router.get('/book/:id', async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id);
+    res.send({
+      success: true,
+      data: book,
+    });
+  } catch (err) {
+    res.send({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
 // Get all books
 router.get('/all-books', async (req, res) => {
   try {

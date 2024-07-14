@@ -1,9 +1,9 @@
 import React from 'react'
-import Products from './Books'
+import Books from './Books'
 
 const index = () => {
   return (
-    <div><Products /></div>
+    <div><Books /></div>
   )
 }
 

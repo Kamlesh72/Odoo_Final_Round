@@ -1,5 +1,7 @@
-export default ROLES = {
-    ADMIN: 'ADMIN',
-    LIBRARIAN: 'LIBRARIAN',
-    USER: 'USER',
+const ROLES = {
+  ADMIN: 'ADMIN',
+  LIBRARIAN: 'LIBRARIAN',
+  USER: 'USER',
 };
+
+export default ROLES;

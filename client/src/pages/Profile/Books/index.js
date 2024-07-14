@@ -108,7 +108,7 @@ const Books = () => {
                         <div>
                             <Button
                                 type="primary"
-                                className="add-product"
+                                className="add-book"
                                 onClick={() => {
                                     setShowBookForm(true);
                                     setSelectedBook(null);
@@ -152,7 +152,7 @@ const Books = () => {
                             return (
                                 <Button
                                     type="primary"
-                                    className="add-product m-5"
+                                    className="add-book m-5"
                                     onClick={() => {
                                         setSelectedUser({ id: chat.buyer, name: chat.buyerName });
                                     }}
